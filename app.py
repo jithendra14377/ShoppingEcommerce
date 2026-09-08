@@ -9,7 +9,7 @@ from cmail import send_mail
 from stoken import endata,dndata
 from mysql.connector import (connection)
 from werkzeug.utils import secure_filename # it check whether the filename is secure or not
-mydb=connection.MySQLConnection(user='root',host='localhost',password='Jithendra@0905',database='ecommerceproject')
+mydb=connection.MySQLConnection(user='flaskuser',host='localhost',password='password',database='flaskdb')
 import re
 import os
 import uuid
