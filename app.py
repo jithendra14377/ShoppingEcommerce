@@ -72,7 +72,7 @@ def adminregister():
         if not data:
             return jsonify({
             "status":"failed",
-            "Message":"No Input given"
+            "message":"No Input given"
         }),400
         admin_name=data.get('username','').strip()
         admin_email=data.get('useremail','').strip()
@@ -108,14 +108,14 @@ def adminregister():
         token=endata(admindata)
         return jsonify({
             "status":"success",
-            "Message":f"OTP has Sent Successfully",
+            "message":f"OTP has Sent Successfully",
             "token":token
         }),200
     except Exception as e:
         print('Error in Registration')
         return jsonify({
             "status":"failed",
-            "Message":f"Could not sent otp{e}"
+            "message":f"Could not sent otp{e}"
             
         }),500
     finally:
@@ -129,14 +129,14 @@ def adminotpverify():
         if not data:
             return jsonify({
             "status":"failed",
-            "Message":"No Input given"
+            "message":"No Input given"
         }),400
         userotp=data.get('otp')
         token=data.get('token')
         if not userotp or not token:
             return jsonify({
             "status":"failed",
-            "Message":"otp and token required"
+            "message":"otp and token required"
         }),400
         try:
             admin_details=dndata(token)
@@ -144,13 +144,13 @@ def adminotpverify():
             print(str(e))
             return jsonify({
             "status":"failed",
-            "Message":"Invalid or expired token"
+            "message":"Invalid or expired token"
         }),400
         #otp validation
         if str(userotp)!=str(admin_details['admin_otp']):
             return jsonify({
             "status":"failed",
-            "Message":"Invalid otp"
+            "message":"Invalid otp"
         }),400
         #reconnect automatically if mysql connection lost
         mydb.ping(reconnect=True)
@@ -160,20 +160,20 @@ def adminotpverify():
         if email_exists>0:
             return jsonify({
             "status":"failed",
-            "Message":"Email already registered"
+            "message":"Email already registered"
         }),400
         cursor.execute('insert into admindata(adminid,username,useremail,password,agree,adminaddress) values(uuid_to_bin(uuid()),%s,%s,%s,%s,%s)',[admin_details['admin_username'],admin_details['admin_useremail'],admin_details['admin_userpassword'],admin_details['admin_agree'],admin_details['admin_address']])
         mydb.commit()
         return jsonify({
             "status":"success",
-            "Message":"Admin registration successfull"
+            "message":"Admin registration successfull"
         }),200
     except Exception as e:
         mydb.rollback()
         print('mysql error :',str(e))
         return jsonify({
             "status":"failed",
-            "Message":"Could not verify OTp"
+            "message":"Could not verify OTp"
         }),400 
     finally:
         if cursor:
@@ -186,14 +186,14 @@ def adminlogin():
         if not data:
             return jsonify({
             "status":"failed",
-            "Message":"No Input given"
+            "message":"No Input given"
         }),400
         login_email=data.get('email','').strip()
         login_password=data.get('password','').strip()
         if not login_email or not login_password:
             return jsonify({
             "status":"failed",
-            "Message":"Email and password required"
+            "message":"Email and password required"
         }),400 
         #my sql connection
         mydb.ping(reconnect=True)
@@ -203,7 +203,7 @@ def adminlogin():
         if not adminstored_data:
             return jsonify({
             "status":"failed",
-            "Message":"Invalid Email"
+            "message":"Invalid Email"
         }),404
         adminid=adminstored_data[0]
         adminname=adminstored_data[1]
@@ -213,14 +213,14 @@ def adminlogin():
         if not bcrypt.check_password_hash(stored_password,login_password):
             return jsonify({
             "status":"failed",
-            "Message":"Invalid password"
+            "message":"Invalid password"
         }),400
         session.permanent=True
         session['adminid']=adminid
         session['adminemail']=adminemail
         return jsonify({
             "status":"success",
-            "Message":"Login successfull",
+            "message":"Login successfull",
             'admin':{
                 'adminid':adminid,
                 'adminname':adminname,
@@ -231,7 +231,7 @@ def adminlogin():
         print('Mysql Error:',str(e))
         return jsonify({
             "status":"failed",
-            "Message":f"Could not verify login details{str(e)}"
+            "message":f"Could not verify login details{str(e)}"
         }),500
     finally:
         if cursor:
@@ -695,7 +695,7 @@ def usercreate():
         if not data:
             return jsonify({
             "status":"failed",
-            "Message":"No Input given"
+            "message":"No Input given"
         }),400
         user_name=data.get('username','').strip()
         user_email=data.get('useremail','').strip()
@@ -733,14 +733,14 @@ def usercreate():
         token=endata(userdata)
         return jsonify({
             "status":"success",
-            "Message":f"OTP has Sent Successfully",
+            "message":f"OTP has Sent Successfully",
             "token":token
         }),200
     except Exception as e:
         print('Error in Registration')
         return jsonify({
             "status":"failed",
-            "Message":f"Could not sent otp{e}"
+            "message":f"Could not sent otp{e}"
             
         }),500
     finally:
@@ -754,14 +754,14 @@ def userotpverify():
         if not data:
             return jsonify({
             "status":"failed",
-            "Message":"No Input given"
+            "message":"No Input given"
         }),400
         userotp=data.get('otp')
         token=data.get('token')
         if not userotp or not token:
             return jsonify({
             "status":"failed",
-            "Message":"otp and token required"
+            "message":"otp and token required"
         }),400
         try:
             user_details=dndata(token)
@@ -769,13 +769,13 @@ def userotpverify():
             print(str(e))
             return jsonify({
             "status":"failed",
-            "Message":"Invalid or expired token"
+            "message":"Invalid or expired token"
         }),400
         #otp validation
         if str(userotp)!=str(user_details['user_otp']):
             return jsonify({
             "status":"failed",
-            "Message":"Invalid otp"
+            "message":"Invalid otp"
         }),400
         #reconnect automatically if mysql connection lost
         mydb.ping(reconnect=True)
@@ -785,20 +785,20 @@ def userotpverify():
         if email_exists>0:
             return jsonify({
             "status":"failed",
-            "Message":"Email already registered"
+            "message":"Email already registered"
         }),400
         cursor.execute('insert into userdata(userid,username,useremail,userpassword,usergender,useraddress,userphone) values(uuid_to_bin(uuid()),%s,%s,%s,%s,%s,%s)',[user_details['user_username'],user_details['user_useremail'],user_details['user_userpassword'],user_details['user_gender'],user_details['user_address'],user_details['user_phone']])
         mydb.commit()
         return jsonify({
             "status":"success",
-            "Message":"User registration successful"
+            "message":"User registration successful"
         }),200
     except Exception as e:
         mydb.rollback()
         print('mysql error :',str(e))
         return jsonify({
             "status":"failed",
-            "Message":"Could not verify OTp"
+            "message":"Could not verify OTp"
         }),400 
     finally:
         if cursor:
@@ -811,14 +811,14 @@ def userlogin():
         if not data:
             return jsonify({
             "status":"failed",
-            "Message":"No Input given"
+            "message":"No Input given"
         }),400
         login_email=data.get('email','').strip()
         login_password=data.get('password','').strip()
         if not login_email or not login_password:
             return jsonify({
             "status":"failed",
-            "Message":"Email and password required"
+            "message":"Email and password required"
         }),400 
         #my sql connection
         mydb.ping(reconnect=True)
@@ -828,7 +828,7 @@ def userlogin():
         if not userstored_data:
             return jsonify({
             "status":"failed",
-            "Message":"Invalid Email"
+            "message":"Invalid Email"
         }),404
         userid=userstored_data[0]
         username=userstored_data[1]
@@ -838,7 +838,7 @@ def userlogin():
         if not bcrypt.check_password_hash(stored_password,login_password):
             return jsonify({
             "status":"failed",
-            "Message":"Invalid password"
+            "message":"Invalid password"
         }),400
         session.permanent=True
         session['userid']=userid
@@ -847,7 +847,7 @@ def userlogin():
         print(session,'after user login ')
         return jsonify({
             "status":"success",
-            "Message":"Login successfull",
+            "message":"Login successfull",
             'user':{
                 'userid':userid,
                 'username':username,
@@ -858,7 +858,7 @@ def userlogin():
         print('Mysql Error:',str(e))
         return jsonify({
             "status":"failed",
-            "Message":f"Could not verify login details{str(e)}"
+            "message":f"Could not verify login details{str(e)}"
         }),500
     finally:
         if cursor:
@@ -2131,6 +2131,6 @@ def resetpassword(token):
         })
     finally:
         if cursor:
-            cursor.close()
+            cursor.close()c
 if __name__=="__main__":
     app.run()
